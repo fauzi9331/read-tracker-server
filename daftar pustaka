@@ -1,0 +1,8 @@
+build graphql server from scratch
+    https://www.prisma.io/docs/1.10/tutorials/build-graphql-servers/development/build-a-graphql-server-from-scratch-nahgaghei6
+
+install docker from here
+    https://docs.docker.com/install/linux/docker-ce/ubuntu/
+
+prisma with docker
+    https://www.prisma.io/docs/1.13/tutorials/deploy-prisma-servers/local-(docker)-meemaesh3k

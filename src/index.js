@@ -1,44 +1,54 @@
 const { GraphQLServer } = require('graphql-yoga')
-
-let idCount = 0
-const posts = []
+const { Prisma } = require('prisma-binding')
 
 const resolvers = {
   Query: {
-    description: () => `This is the API for a simple blogging application`,
-    posts: () => posts,
-    post: (parent, args) => posts.find(post => post.id === args.id),
+    posts(parent, args, ctx, info) {
+      return ctx.db.query.posts({ }, info)
+    },
+    post(parent, args, ctx, info) {
+      return ctx.db.query.post({ where: { id: args.id } }, info)
+    },
   },
   Mutation: {
-    createDraft: (parent, args) => {
-      const post = {
-        id: `post_${idCount++}`,
-        title: args.title,
-        content: args.content,
-        published: false,
-      }
-      posts.push(post)
-      return post
+    createDraft(parent, { title, content }, ctx, info) {
+      return ctx.db.mutation.createPost(
+        {
+          data: {
+            title,
+            content,
+          },
+        },
+        info,
+      )
     },
-    deletePost: (parent, args) => {
-      const postIndex = posts.findIndex(post => post.id === args.id)
-      if (postIndex > -1) {
-        const deleted = posts.splice(postIndex, 1)
-        return deleted[0]
-      }
-      return null
+    deletePost(parent, { id }, ctx, info) {
+      return ctx.db.mutation.deletePost({ where: { id } }, info)
     },
-    publish: (parent, args) => {
-      const postIndex = posts.findIndex(post => post.id === args.id)
-      posts[postIndex].published = true
-      return posts[postIndex]
+    publish(parent, { id }, ctx, info) {
+      return ctx.db.mutation.updatePost(
+        {
+          where: { id },
+          data: { published: true },
+        },
+        info,
+      )
     },
   },
 }
 
 const server = new GraphQLServer({
-    typeDefs: './src/schema.graphql',
-    resolvers
-  })
+  typeDefs: './src/schema.graphql',
+  resolvers,
+  context: req => ({
+    ...req,
+    db: new Prisma({
+      typeDefs: 'src/generated/prisma.graphql', // the generated Prisma DB schema
+      endpoint: 'http://localhost:4466',          // the endpoint of the Prisma DB service
+      secret: 'mysecret123',                    // specified in database/prisma.yml
+      debug: true,                              // log all GraphQL queries & mutations
+    }),
+  }),
+})
 
-server.start(() => console.log(`The server is running on http://localhost:4000`))
+server.start(() => console.log('Server is running on http://localhost:4000'))

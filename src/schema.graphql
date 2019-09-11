@@ -1,13 +1,19 @@
-# import Post from "./generated/prisma.graphql"
+# The typeDefs constant defines your GraphQL schema (more about this in a bit). 
+# Here, it defines a simple Query type with one field called info. This field has 
+# the type String!. The exclamation mark in the type definition means that this 
+# field can never be null.
 
 type Query {
-  posts: [Post!]!
-  post(id: ID!): Post
-  description: String!
+  info: String!
+  feed: [Link]!
 }
 
 type Mutation {
-  createDraft(title: String!, content: String): Post
-  deletePost(id: ID!): Post
-  publish(id: ID!): Post
+  post(url: String!, description: String!): Link!
+}
+
+type Link{
+  id: ID!
+  description: String!
+  url: String!
 }

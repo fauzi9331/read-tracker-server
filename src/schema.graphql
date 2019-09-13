@@ -6,14 +6,33 @@
 type Query {
   info: String!
   feed: [Link]!
+  users: [User]!
 }
 
 type Mutation {
   post(url: String!, description: String!): Link!
+  # Remember the process of schema-driven development? It all starts with extending your 
+  # schema definition with the new operations that you want to add to the API - in this 
+  # case a signup and login mutation.
+  signup(email:String!, password: String!, name: String!): AuthPayload
+  login(email: String!, password: String!): AuthPayload
 }
 
 type Link{
   id: ID!
   description: String!
   url: String!
+  postedBy: User
+}
+
+type AuthPayload {
+  token: String
+  user: User
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  links: [Link!]!
 }

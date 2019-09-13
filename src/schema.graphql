@@ -5,7 +5,14 @@
 
 type Query {
     info: String!
-    feed: [Link]!
+    # Limit and offset are called differently in the Prisma API:
+
+    # The limit is called first, meaning you’re grabbing the first x elements after a provided 
+    # start index. Note that you also have a last argument available which correspondingly returns the last x elements.
+    # The start index is called skip, since you’re skipping that many elements in the list 
+    # before collecting the items to be returned. If skip is not provided, it’s 0 by default. 
+    # The pagination then always starts from the beginning of the list (or the end in case you’re using last).
+    feed(filter: String, skip: Int, first: Int, orderBy: LinkOrderByInput): Feed!
     users: [User]!
 }
 
@@ -22,6 +29,11 @@ type Link {
     url: String!
     postedBy: User
     votes: [Vote!]!
+}
+
+type Feed{
+    links: [Link!]!
+    count: Int!
 }
 
 type AuthPayload {
@@ -45,4 +57,13 @@ type Vote {
     id: ID!
     link: Link!
     user: User!
+}
+
+enum LinkOrderByInput {
+  description_ASC
+  description_DESC
+  url_ASC
+  url_DESC
+  createdAt_ASC
+  createdAt_DESC
 }

@@ -6,16 +6,20 @@
 
 const { GraphQLServer } = require("graphql-yoga");
 const { prisma } = require("./generated/prisma-client");
-const Query = require('./resolvers/Query')
-const Mutation = require('./resolvers/Mutation')
-const User = require('./resolvers/User')
-const Link = require('./resolvers/Link')
+const Query = require("./resolvers/Query");
+const Mutation = require("./resolvers/Mutation");
+const User = require("./resolvers/User");
+const Link = require("./resolvers/Link");
+const Subscription = require("./resolvers/Subscription");
+const Vote = require("./resolvers/Vote");
 
 const resolvers = {
     Query,
     Mutation,
     User,
-    Link
+    Link,
+    Subscription,
+    Vote,
 };
 
 // the schema and resolvers are bundled and passed to the GraphQLServer which is imported
@@ -26,10 +30,10 @@ const server = new GraphQLServer({
     // The resolvers object is the actual implementation of the GraphQL schema. Notice how
     // its structure is identical to the structure of the type definition inside typeDefs: Query.info.
     resolvers,
-    // Instead of attaching an object directly, you’re now creating the context as a function 
-    // which returns the context. The advantage of this approach is that you can attach the HTTP 
-    // request that carries the incoming GraphQL query (or mutation) to the context as well. 
-    // This will allow your resolvers to read the Authorization header and validate if the user 
+    // Instead of attaching an object directly, you’re now creating the context as a function
+    // which returns the context. The advantage of this approach is that you can attach the HTTP
+    // request that carries the incoming GraphQL query (or mutation) to the context as well.
+    // This will allow your resolvers to read the Authorization header and validate if the user
     // who submitted the request is eligible to perform the requested operation.
     context: request => {
         return {

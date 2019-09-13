@@ -1,38 +1,48 @@
-# The typeDefs constant defines your GraphQL schema (more about this in a bit). 
-# Here, it defines a simple Query type with one field called info. This field has 
-# the type String!. The exclamation mark in the type definition means that this 
+# The typeDefs constant defines your GraphQL schema (more about this in a bit).
+# Here, it defines a simple Query type with one field called info. This field has
+# the type String!. The exclamation mark in the type definition means that this
 # field can never be null.
 
 type Query {
-  info: String!
-  feed: [Link]!
-  users: [User]!
+    info: String!
+    feed: [Link]!
+    users: [User]!
 }
 
 type Mutation {
-  post(url: String!, description: String!): Link!
-  # Remember the process of schema-driven development? It all starts with extending your 
-  # schema definition with the new operations that you want to add to the API - in this 
-  # case a signup and login mutation.
-  signup(email:String!, password: String!, name: String!): AuthPayload
-  login(email: String!, password: String!): AuthPayload
+    post(url: String!, description: String!): Link!
+    signup(email: String!, password: String!, name: String!): AuthPayload
+    login(email: String!, password: String!): AuthPayload
+    vote(linkId: ID!): Vote
 }
 
-type Link{
-  id: ID!
-  description: String!
-  url: String!
-  postedBy: User
+type Link {
+    id: ID!
+    description: String!
+    url: String!
+    postedBy: User
+    votes: [Vote!]!
 }
 
 type AuthPayload {
-  token: String
-  user: User
+    token: String
+    user: User
 }
 
 type User {
-  id: ID!
-  name: String!
-  email: String!
-  links: [Link!]!
+    id: ID!
+    name: String!
+    email: String!
+    links: [Link!]!
+}
+
+type Subscription {
+    newLink: Link
+    newVote: Vote
+}
+
+type Vote {
+    id: ID!
+    link: Link!
+    user: User!
 }
